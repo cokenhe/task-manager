@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import TaskFilter, { FilterOption } from "./components/TaskFilter";
 import TaskForm from "./components/TaskForm";
 import TaskList from "./components/TaskList";
@@ -15,6 +15,23 @@ function App() {
             return tasks.filter((task) => task.category === selectedCategory);
         }
     }, [tasks, selectedCategory]);
+
+    useEffect(() => {
+        const savedTasks = localStorage.getItem("tasks");
+        if (savedTasks && savedTasks !== "[]") {
+            const parsedTasks = JSON.parse(savedTasks);
+            setTasks(
+                parsedTasks.map((task: Task) => ({
+                    ...task,
+                    dueDate: new Date(task.dueDate),
+                }))
+            );
+        }
+    }, []);
+
+    useEffect(() => {
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+    }, [tasks]);
 
     const addTaskHandler = (task: Task) => {
         task.dueDate.setHours(24);
