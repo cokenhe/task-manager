@@ -48,6 +48,7 @@ function App() {
     return (
         <div className="bg-gray-100 min-h-screen items-center">
             <div className="mx-8 pt-8">
+                <h1 className="text-4xl font-bold mb-4">Task Manager</h1>
                 <TaskForm onSubmit={addTaskHandler} />
                 <hr className=" my-2" />
                 <TaskList tasks={filteredTasks} onDelete={deleteTaskHandler} />
