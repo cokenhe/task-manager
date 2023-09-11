@@ -34,7 +34,6 @@ function App() {
     }, [tasks]);
 
     const addTaskHandler = (task: Task) => {
-        task.dueDate.setHours(24);
         setTasks((prevTasks) => {
             return [...prevTasks, task];
         });

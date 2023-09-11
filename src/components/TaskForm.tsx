@@ -1,11 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
-import { ZodType, z } from "zod";
+import { z } from "zod";
 import categories from "../categories";
-import { Task } from "../types/TaskModel";
 
-const TaskSchema: ZodType<Task> = z.object({
+const TaskSchema = z.object({
     id: z.string().uuid(),
     title: z
         .string()
@@ -28,14 +27,14 @@ interface TaskFormProps {
 
 const TaskForm: React.FC<TaskFormProps> = ({ onSubmit }) => {
     const { register, handleSubmit, reset, formState } = useForm<TaskFormType>({
-        defaultValues: {
-            dueDate: new Date(),
-        },
         resolver: zodResolver(TaskSchema),
     });
 
     const onSubmitHandler = (data: TaskFormType) => {
-        onSubmit({ ...data, id: uuidv4() });
+        onSubmit({
+            ...data,
+            id: uuidv4(),
+        });
         reset();
     };
 
@@ -80,12 +79,20 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit }) => {
                         id="dueDate"
                         {...register("dueDate", {
                             setValueAs: (value: string) => {
-                                const date = new Date(value);
-                                const utcDate = new Date(
-                                    date.getTime() +
-                                        date.getTimezoneOffset() * 60000
-                                );
-                                return utcDate;
+                                if (value === "") {
+                                    // If the date is empty, set it to today
+                                    return new Date(
+                                        new Date().setHours(0, 0, 0, 0)
+                                    );
+                                } else {
+                                    // Otherwise, set it to the date selected with offset
+                                    const date = new Date(value);
+                                    const utcDate = new Date(
+                                        date.getTime() +
+                                            date.getTimezoneOffset() * 60000
+                                    );
+                                    return utcDate;
+                                }
                             },
                         })}
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
